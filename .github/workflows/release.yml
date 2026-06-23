@@ -1,0 +1,63 @@
+name: Release
+
+# Runs when you publish a GitHub Release (e.g. for tag v1.2.0).
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-attach:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      # Stamp the release version + canonical URLs into the built manifest.
+      # The committed module.json values are placeholders; these are authoritative.
+      - name: Inject manifest values
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          node -e "
+            const fs = require('fs');
+            const path = 'dist/module.json';
+            const tag = process.env.TAG;
+            const repo = process.env.REPO;
+            const version = tag.replace(/^v/, '');
+            const m = JSON.parse(fs.readFileSync(path, 'utf8'));
+            m.version = version;
+            m.url = 'https://github.com/' + repo;
+            m.manifest = 'https://github.com/' + repo + '/releases/latest/download/module.json';
+            m.download = 'https://github.com/' + repo + '/releases/download/' + tag + '/module.zip';
+            fs.writeFileSync(path, JSON.stringify(m, null, '\t') + '\n');
+            console.log('Stamped', version, '->', m.download);
+          "
+
+      - name: Zip the module
+        run: |
+          cd dist
+          zip -r ../module.zip .
+          cd ..
+
+      - name: Attach module.zip and module.json to the release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            module.zip
+            dist/module.json

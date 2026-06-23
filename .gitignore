@@ -1,0 +1,6 @@
+node_modules/
+dist/
+module.zip
+*.log
+.DS_Store
+.vscode/

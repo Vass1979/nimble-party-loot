@@ -1,0 +1,21 @@
+{
+	"name": "nimble-party-loot",
+	"version": "1.2.0",
+	"description": "Shared party loot stash for the Nimble 2 Foundry VTT system.",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"build": "vite build",
+		"watch": "vite build --watch",
+		"check": "svelte-check --tsconfig ./tsconfig.json"
+	},
+	"devDependencies": {
+		"@sveltejs/vite-plugin-svelte": "^5.0.3",
+		"sass": "^1.83.0",
+		"svelte": "^5.19.0",
+		"svelte-check": "^4.1.4",
+		"typescript": "^5.7.3",
+		"vite": "^6.0.7",
+		"vite-plugin-static-copy": "^2.2.0"
+	}
+}

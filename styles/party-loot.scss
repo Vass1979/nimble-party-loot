@@ -1,0 +1,612 @@
+// Nimble Party Loot — styled to sit alongside the Nimble 2 system sheets.
+// Wherever possible we reference the system's own --nimble-* custom properties
+// (declared on :root by the system) with sensible fallbacks, so the window
+// reads as native and tracks any future palette changes.
+
+.nimble-party-loot {
+	--npl-gold: hsl(45, 74%, 52%);
+	--npl-silver: hsl(210, 9%, 70%);
+	--npl-copper: hsl(20, 56%, 47%);
+
+	.window-content {
+		padding: 0;
+	}
+}
+
+.npl {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	gap: 0.5rem;
+	padding: 0.5rem;
+	overflow: hidden;
+	font-family: var(--nimble-primary-font, "Roboto Condensed", sans-serif);
+	color: var(--nimble-dark-text-color, hsl(50, 14%, 9%));
+	background: var(--nimble-sheet-background, hsl(40, 20%, 94%));
+	transition: box-shadow 120ms ease-in-out;
+
+	&--drag-over {
+		box-shadow: inset 0 0 0 3px hsla(var(--nimble-drop-flash-color-values, 45, 100%, 67%), 0.9);
+	}
+
+	&__banner {
+		margin: 0;
+		padding: 0.35rem 0.5rem;
+		font-size: var(--nimble-sm-text, 0.833rem);
+		text-align: center;
+		color: var(--nimble-warning-icon-color, hsl(33, 100%, 35%));
+		background: var(--nimble-warning-background-color, hsla(45, 100%, 52%, 0.6));
+		border: 1px solid var(--nimble-warning-border-color, hsl(33, 50%, 65%));
+		border-radius: 4px;
+	}
+
+	&__items {
+		flex: 1;
+		overflow-y: auto;
+		padding-right: 2px;
+	}
+
+	&__empty {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 0.4rem;
+		height: 100%;
+		text-align: center;
+		color: var(--nimble-medium-text-color, hsl(50, 14%, 35%));
+
+		i {
+			font-size: 2.5rem;
+			opacity: 0.4;
+		}
+
+		p {
+			margin: 0;
+		}
+	}
+
+	&__empty-hint {
+		font-size: var(--nimble-xs-text, 0.694rem);
+		max-width: 22ch;
+	}
+}
+
+/* ---- Currency bar -------------------------------------------------------- */
+.npl-currency {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 0.4rem;
+}
+
+.npl-coin {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	grid-template-areas:
+		"disc value"
+		"disc label"
+		"actions actions";
+	align-items: center;
+	column-gap: 0.4rem;
+	padding: 0.4rem 0.5rem;
+	background: var(--nimble-card-background-color, hsl(48, 17%, 97%));
+	border: 1px solid var(--nimble-card-border-color, hsla(41, 18%, 54%, 0.25));
+	border-radius: 6px;
+	box-shadow: var(--nimble-card-box-shadow, hsla(0, 0%, 0%, 0.24) 0 3px 8px);
+
+	&__disc {
+		grid-area: disc;
+		display: grid;
+		place-items: center;
+		width: 1.9rem;
+		height: 1.9rem;
+		font-size: var(--nimble-xs-text, 0.694rem);
+		font-weight: 700;
+		text-transform: uppercase;
+		color: hsl(0, 0%, 18%);
+		border-radius: 50%;
+		box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.25);
+	}
+
+	&__value {
+		grid-area: value;
+		font-size: var(--nimble-xl-text, 1.44rem);
+		font-weight: 700;
+		line-height: 1;
+	}
+
+	&__label {
+		grid-area: label;
+		font-size: var(--nimble-xxs-text, 0.579rem);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--nimble-medium-text-color, hsl(50, 14%, 35%));
+	}
+
+	&__actions {
+		grid-area: actions;
+		display: flex;
+		gap: 0.25rem;
+		margin-top: 0.35rem;
+	}
+
+	&__btn {
+		flex: 1;
+		padding: 0.15rem 0;
+		font-size: var(--nimble-xs-text, 0.694rem);
+		color: var(--nimble-dark-text-color, hsl(50, 14%, 9%));
+		background: var(--nimble-basic-button-background-color, hsl(41, 18%, 80%));
+		border: 1px solid var(--nimble-box-color, hsl(41, 18%, 54%));
+		border-radius: 4px;
+		cursor: pointer;
+
+		&:hover:not(:disabled) {
+			filter: brightness(1.05);
+		}
+
+		&:disabled {
+			opacity: 0.4;
+			cursor: default;
+		}
+	}
+
+	&--gp .npl-coin__disc {
+		background: radial-gradient(circle at 35% 30%, hsl(45, 90%, 70%), var(--npl-gold));
+	}
+	&--sp .npl-coin__disc {
+		background: radial-gradient(circle at 35% 30%, hsl(210, 14%, 88%), var(--npl-silver));
+	}
+	&--cp .npl-coin__disc {
+		background: radial-gradient(circle at 35% 30%, hsl(20, 70%, 62%), var(--npl-copper));
+	}
+}
+
+/* ---- GM coin mint panel -------------------------------------------------- */
+.npl-gm-coins {
+	margin-top: 0.4rem;
+	padding: 0.35rem 0.4rem;
+	background: var(--nimble-secondary-navigation-background, rgba(0, 0, 0, 0.05));
+	border: 1px dashed var(--nimble-box-color, hsl(41, 18%, 54%));
+	border-radius: 6px;
+
+	&__toggle {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		width: 100%;
+		padding: 0.15rem 0.1rem;
+		font-size: var(--nimble-sm-text, 0.833rem);
+		font-weight: 700;
+		color: var(--nimble-medium-text-color, hsl(50, 14%, 35%));
+		background: none;
+		border: none;
+		cursor: pointer;
+		text-align: left;
+	}
+
+	&__row {
+		display: flex;
+		align-items: flex-end;
+		gap: 0.3rem;
+		margin-top: 0.35rem;
+	}
+
+	&__field {
+		display: flex;
+		flex-direction: column;
+		gap: 0.1rem;
+		flex: 1;
+		font-size: var(--nimble-xxs-text, 0.579rem);
+		text-transform: uppercase;
+		color: var(--nimble-medium-text-color, hsl(50, 14%, 35%));
+
+		input {
+			width: 100%;
+			text-align: center;
+			padding: 0.2rem;
+			border: 1px solid var(--nimble-currency-input-border-color, hsl(41, 18%, 54%));
+			border-radius: 4px;
+			background: var(--color-cool-5, #fff);
+		}
+	}
+
+	&__add {
+		padding: 0.3rem 0.7rem;
+		color: var(--nimble-light-text-color, hsl(38, 38%, 94%));
+		background: var(--nimble-accent-color, hsl(223, 14%, 45%));
+		border: 1px solid var(--nimble-box-color, hsl(41, 18%, 54%));
+		border-radius: 4px;
+		cursor: pointer;
+	}
+
+	&__hint {
+		margin: 0.3rem 0 0;
+		font-size: var(--nimble-xxs-text, 0.579rem);
+		color: var(--nimble-medium-text-color, hsl(50, 14%, 35%));
+	}
+}
+
+/* ---- Coin action buttons (Deposit / Withdraw / Spend) -------------------- */
+.npl-coin-actions {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 0.4rem;
+	margin-top: 0.4rem;
+}
+
+.npl-coin-action {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.3rem;
+	padding: 0.4rem 0.3rem;
+	font-family: var(--nimble-primary-font, "Roboto Condensed", sans-serif);
+	font-size: var(--nimble-sm-text, 0.833rem);
+	font-weight: 700;
+	color: var(--nimble-dark-text-color, hsl(50, 14%, 9%));
+	background: var(--nimble-basic-button-background-color, hsl(41, 18%, 80%));
+	border: 1px solid var(--nimble-box-color, hsl(41, 18%, 54%));
+	border-radius: 5px;
+	cursor: pointer;
+
+	&:hover:not(:disabled) {
+		filter: brightness(1.05);
+	}
+
+	&:disabled {
+		opacity: 0.45;
+		cursor: default;
+	}
+
+	&--spend {
+		color: var(--nimble-light-text-color, hsl(38, 38%, 94%));
+		background: var(--nimble-secondary-navigation-active-text-color, hsl(1, 51%, 34%));
+	}
+}
+
+/* ---- Multi-currency modal fields ----------------------------------------- */
+.npl-coinfields {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	margin-bottom: 0.5rem;
+
+	&__row {
+		display: grid;
+		grid-template-columns: 1fr 5rem auto;
+		align-items: center;
+		gap: 0.4rem;
+	}
+
+	&__label {
+		font-size: var(--nimble-sm-text, 0.833rem);
+	}
+
+	&__input {
+		text-align: center;
+		padding: 0.25rem;
+		border: 1px solid var(--nimble-currency-input-border-color, hsl(41, 18%, 54%));
+		border-radius: 4px;
+		background: var(--color-cool-5, #fff);
+	}
+
+	&__max {
+		min-width: 3rem;
+		padding: 0.25rem 0.4rem;
+		font-size: var(--nimble-xs-text, 0.694rem);
+		color: var(--nimble-medium-text-color, hsl(50, 14%, 35%));
+		background: var(--nimble-basic-button-background-color, hsl(41, 18%, 80%));
+		border: 1px solid var(--nimble-box-color, hsl(41, 18%, 54%));
+		border-radius: 4px;
+		cursor: pointer;
+	}
+}
+
+.npl-modal__input--text {
+	width: 100%;
+	margin-top: 0.25rem;
+}
+
+/* ---- Spending ledger ----------------------------------------------------- */
+.npl-ledger {
+	flex: 0 0 auto;
+	padding: 0.35rem 0.4rem;
+	background: var(--nimble-secondary-navigation-background, rgba(0, 0, 0, 0.05));
+	border: 1px solid var(--nimble-card-border-color, hsla(41, 18%, 54%, 0.25));
+	border-radius: 6px;
+
+	&__toggle {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		width: 100%;
+		padding: 0.15rem 0.1rem;
+		font-size: var(--nimble-sm-text, 0.833rem);
+		font-weight: 700;
+		color: var(--nimble-medium-text-color, hsl(50, 14%, 35%));
+		background: none;
+		border: none;
+		cursor: pointer;
+		text-align: left;
+	}
+
+	&__count {
+		margin-left: auto;
+		padding: 0 0.4rem;
+		font-size: var(--nimble-xxs-text, 0.579rem);
+		color: var(--nimble-light-text-color, hsl(38, 38%, 94%));
+		background: var(--nimble-accent-color, hsl(223, 14%, 45%));
+		border-radius: 999px;
+	}
+
+	&__empty {
+		margin: 0.3rem 0;
+		font-size: var(--nimble-xs-text, 0.694rem);
+		color: var(--nimble-medium-text-color, hsl(50, 14%, 35%));
+	}
+
+	&__list {
+		list-style: none;
+		margin: 0.35rem 0 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		max-height: 11rem;
+		overflow-y: auto;
+	}
+
+	&__entry {
+		padding: 0.25rem 0.35rem;
+		font-size: var(--nimble-xs-text, 0.694rem);
+		background: var(--nimble-card-background-color, hsl(48, 17%, 97%));
+		border: 1px solid var(--nimble-card-border-color, hsla(41, 18%, 54%, 0.25));
+		border-radius: 4px;
+	}
+
+	&__coins {
+		font-weight: 700;
+		color: var(--npl-gold);
+	}
+
+	&__time {
+		display: block;
+		margin-top: 0.1rem;
+		font-size: var(--nimble-xxs-text, 0.579rem);
+		color: var(--nimble-medium-text-color, hsl(50, 14%, 35%));
+	}
+
+	&__clear {
+		margin-top: 0.4rem;
+		padding: 0.25rem 0.6rem;
+		font-size: var(--nimble-xs-text, 0.694rem);
+		color: var(--nimble-light-text-color, hsl(38, 38%, 94%));
+		background: var(--nimble-condition-hud-clear-all-color, hsl(0, 58%, 35%));
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+	}
+}
+
+/* ---- Item groups & rows -------------------------------------------------- */
+.npl-group {
+	margin-bottom: 0.5rem;
+
+	&__heading {
+		margin: 0.25rem 0 0.2rem;
+		padding-bottom: 0.15rem;
+		font-size: var(--nimble-sm-text, 0.833rem);
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: var(--nimble-medium-text-color, hsl(50, 14%, 35%));
+		border-bottom: 1px solid var(--nimble-box-color, hsl(41, 18%, 54%));
+	}
+
+	&__list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+	}
+}
+
+.npl-row {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.25rem 0.4rem;
+	background: var(--nimble-card-background-color, hsl(48, 17%, 97%));
+	border: 1px solid var(--nimble-card-border-color, hsla(41, 18%, 54%, 0.25));
+	border-radius: 5px;
+	cursor: grab;
+
+	&:hover {
+		border-color: var(--nimble-box-color, hsl(41, 18%, 54%));
+	}
+
+	&:active {
+		cursor: grabbing;
+	}
+
+	&--unidentified {
+		font-style: italic;
+		opacity: 0.85;
+	}
+
+	&__img {
+		width: 1.9rem;
+		height: 1.9rem;
+		object-fit: cover;
+		border: 1px solid var(--nimble-box-color, hsl(41, 18%, 54%));
+		border-radius: 4px;
+		background: var(--nimble-image-background-color, #494949);
+		flex: 0 0 auto;
+	}
+
+	&__name {
+		flex: 1;
+		font-size: var(--nimble-sm-text, 0.833rem);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	&__qty {
+		font-weight: 700;
+		font-size: var(--nimble-sm-text, 0.833rem);
+		color: var(--nimble-medium-text-color, hsl(50, 14%, 35%));
+	}
+
+	&__flag {
+		color: var(--nimble-medium-text-color, hsl(50, 14%, 35%));
+		font-size: var(--nimble-xs-text, 0.694rem);
+	}
+
+	&__take {
+		flex: 0 0 auto;
+		width: 1.7rem;
+		height: 1.7rem;
+		display: grid;
+		place-items: center;
+		color: var(--nimble-dark-text-color, hsl(50, 14%, 9%));
+		background: var(--nimble-basic-button-background-color, hsl(41, 18%, 80%));
+		border: 1px solid var(--nimble-box-color, hsl(41, 18%, 54%));
+		border-radius: 4px;
+		cursor: pointer;
+
+		&:hover {
+			filter: brightness(1.05);
+		}
+	}
+}
+
+/* ---- Modals -------------------------------------------------------------- */
+.npl-modal {
+	position: absolute;
+	inset: 0;
+	z-index: 10;
+	display: grid;
+	place-items: center;
+	background: hsla(0, 0%, 0%, 0.45);
+
+	&__panel {
+		width: min(20rem, 90%);
+		padding: 0.85rem;
+		background: var(--nimble-sheet-background, hsl(40, 20%, 94%));
+		border: 1px solid var(--nimble-box-color, hsl(41, 18%, 54%));
+		border-radius: 8px;
+		box-shadow: var(--nimble-box-shadow, 0 0 6px hsla(0, 0%, 0%, 0.2));
+	}
+
+	&__title {
+		margin: 0 0 0.5rem;
+		font-size: var(--nimble-lg-text, 1.2rem);
+		font-weight: 700;
+	}
+
+	&__label {
+		display: block;
+		margin-bottom: 0.35rem;
+		font-size: var(--nimble-sm-text, 0.833rem);
+	}
+
+	&__row {
+		display: flex;
+		align-items: center;
+		gap: 0.3rem;
+	}
+
+	&__input {
+		flex: 1;
+		text-align: center;
+		font-size: var(--nimble-md-text, 1rem);
+		padding: 0.25rem;
+		border: 1px solid var(--nimble-currency-input-border-color, hsl(41, 18%, 54%));
+		border-radius: 4px;
+		background: var(--color-cool-5, #fff);
+	}
+
+	&__step,
+	&__max {
+		padding: 0.3rem 0.5rem;
+		background: var(--nimble-basic-button-background-color, hsl(41, 18%, 80%));
+		border: 1px solid var(--nimble-box-color, hsl(41, 18%, 54%));
+		border-radius: 4px;
+		cursor: pointer;
+	}
+
+	&__hint {
+		margin: 0.35rem 0 0;
+		font-size: var(--nimble-xs-text, 0.694rem);
+		color: var(--nimble-medium-text-color, hsl(50, 14%, 35%));
+	}
+
+	&__actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 0.4rem;
+		margin-top: 0.75rem;
+	}
+
+	&__btn {
+		padding: 0.3rem 0.8rem;
+		border-radius: 4px;
+		border: 1px solid var(--nimble-box-color, hsl(41, 18%, 54%));
+		cursor: pointer;
+
+		&--confirm {
+			color: var(--nimble-light-text-color, hsl(38, 38%, 94%));
+			background: var(--nimble-accent-color, hsl(223, 14%, 45%));
+		}
+
+		&--cancel {
+			background: var(--nimble-basic-button-background-color, hsl(41, 18%, 80%));
+		}
+	}
+}
+
+/* ---- Character picker ---------------------------------------------------- */
+.npl-picker {
+	&__list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+		max-height: 16rem;
+		overflow-y: auto;
+	}
+
+	&__item {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		width: 100%;
+		padding: 0.3rem 0.4rem;
+		text-align: left;
+		background: var(--nimble-card-background-color, hsl(48, 17%, 97%));
+		border: 1px solid var(--nimble-card-border-color, hsla(41, 18%, 54%, 0.25));
+		border-radius: 5px;
+		cursor: pointer;
+
+		&:hover {
+			border-color: var(--nimble-box-color, hsl(41, 18%, 54%));
+		}
+	}
+
+	&__img {
+		width: 2rem;
+		height: 2rem;
+		object-fit: cover;
+		border-radius: 4px;
+		border: 1px solid var(--nimble-box-color, hsl(41, 18%, 54%));
+	}
+
+	&__name {
+		font-size: var(--nimble-md-text, 1rem);
+	}
+}
